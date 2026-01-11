@@ -34,7 +34,7 @@ export default function Analytics() {
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
-        const data = await apiClient.get(`/analytics?domain=${selectedDomain}`)
+        const data = await apiClient.get<any>(`/analytics?domain=${selectedDomain}`)
         setAnalyticsData(data)
       } catch (error) {
         console.error('Failed to fetch analytics:', error)
@@ -159,7 +159,7 @@ export default function Analytics() {
                   fill="#8884d8"
                   dataKey="value"
                 >
-                  {analyticsData.domainDistribution.map((entry: any, index: number) => (
+                  {analyticsData.domainDistribution.map((_entry: any, index: number) => (
                     <Cell
                       key={`cell-${index}`}
                       fill={COLORS[index % COLORS.length]}

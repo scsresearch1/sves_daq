@@ -24,17 +24,17 @@ export default function Brake() {
       try {
         setError(null)
         const [domainData, streamsData, complianceData] = await Promise.all([
-          apiClient.get('/domain/brake'),
-          apiClient.get('/domain/brake/streams?limit=10'),
-          apiClient.get('/compliance').catch(() => [])
+          apiClient.get<any>('/domain/brake'),
+          apiClient.get<any[]>('/domain/brake/streams?limit=10'),
+          apiClient.get<any[]>('/compliance').catch(() => [])
         ])
 
         console.log('Brake domain data:', domainData)
         console.log('Brake streams data:', streamsData)
 
-        setKpis(domainData.kpis || [])
-        setEvents(domainData.events || [])
-        setStreams(streamsData || [])
+        setKpis((domainData as any)?.kpis || [])
+        setEvents((domainData as any)?.events || [])
+        setStreams(Array.isArray(streamsData) ? streamsData : [])
         setCompliance(Array.isArray(complianceData) ? complianceData.filter((c: any) => 
           c.standard?.includes('FMVSS') || c.standard?.includes('ECE') || c.standard?.includes('Brake')
         ) : [])
@@ -57,10 +57,10 @@ export default function Brake() {
   const displayKPIs = kpis.map((kpi: any) => {
     if (kpi.domain === 'brakes') {
       return [
-        { title: 'Stopping Distance', value: Math.round((kpi.stoppingDistanceM || 0) * 10) / 10, unit: 'm', target: 45, status: (kpi.stoppingDistanceM || 0) <= 45 ? 'good' : 'warning' as const, level: 'subsystem' as const },
-        { title: 'MFDD', value: Math.round((kpi.mfdd || 0) * 100) / 100, unit: 'm/s²', target: 7.5, status: (kpi.mfdd || 0) >= 7.5 ? 'good' : 'warning' as const, level: 'subsystem' as const },
-        { title: 'Brake Fade Slope', value: Math.round((kpi.fadeSlope || 0) * 100) / 100, unit: '%/cycle', status: (kpi.fadeSlope || 0) > -0.15 ? 'good' : 'warning' as const, level: 'subsystem' as const },
-        { title: 'ABS Activation Rate', value: Math.round((kpi.absActivationRate || 0) * 100 * 10) / 10, unit: '%', status: (kpi.absActivationRate || 0) < 0.5 ? 'good' : 'warning' as const, level: 'subsystem' as const },
+        { title: 'Stopping Distance', value: Math.round((kpi.stoppingDistanceM || 0) * 10) / 10, unit: 'm', target: 45, status: ((kpi.stoppingDistanceM || 0) <= 45 ? 'good' : 'warning') as 'good' | 'warning', level: 'subsystem' as const },
+        { title: 'MFDD', value: Math.round((kpi.mfdd || 0) * 100) / 100, unit: 'm/s²', target: 7.5, status: ((kpi.mfdd || 0) >= 7.5 ? 'good' : 'warning') as 'good' | 'warning', level: 'subsystem' as const },
+        { title: 'Brake Fade Slope', value: Math.round((kpi.fadeSlope || 0) * 100) / 100, unit: '%/cycle', status: ((kpi.fadeSlope || 0) > -0.15 ? 'good' : 'warning') as 'good' | 'warning', level: 'subsystem' as const },
+        { title: 'ABS Activation Rate', value: Math.round((kpi.absActivationRate || 0) * 100 * 10) / 10, unit: '%', status: ((kpi.absActivationRate || 0) < 0.5 ? 'good' : 'warning') as 'good' | 'warning', level: 'subsystem' as const },
       ]
     }
     return []

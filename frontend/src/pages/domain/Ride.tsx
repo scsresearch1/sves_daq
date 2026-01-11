@@ -22,13 +22,13 @@ export default function Ride() {
       try {
         setError(null)
         const [domainData, streamsData] = await Promise.all([
-          apiClient.get('/domain/ride'),
-          apiClient.get('/domain/ride/streams?limit=10')
+          apiClient.get<any>('/domain/ride'),
+          apiClient.get<any[]>('/domain/ride/streams?limit=10')
         ])
 
         console.log('Ride domain data:', domainData)
-        setKpis(domainData.kpis || [])
-        setStreams(streamsData || [])
+        setKpis((domainData as any)?.kpis || [])
+        setStreams(Array.isArray(streamsData) ? streamsData : [])
       } catch (error: any) {
         console.error('Failed to fetch ride data:', error)
         setError(error.message || 'Failed to fetch ride data')
@@ -46,9 +46,9 @@ export default function Ride() {
   const displayKPIs = kpis.map((kpi: any) => {
     if (kpi.domain === 'ride') {
       return [
-        { title: 'Weighted RMS Acceleration', value: Math.round((kpi.iso2631_weightedRMS_ms2 || 0) * 100) / 100, unit: 'm/s²', status: (kpi.iso2631_weightedRMS_ms2 || 0) < 0.8 ? 'good' : 'warning' as const, level: 'subsystem' as const },
-        { title: 'Exposure Duration', value: Math.round((kpi.exposureHours || 0) * 10) / 10, unit: 'hrs', status: (kpi.exposureHours || 0) < 4 ? 'good' : 'warning' as const, level: 'subsystem' as const },
-        { title: 'Comfort Status', value: kpi.comfortStatus === 'OK' ? 100 : kpi.comfortStatus === 'Warning' ? 60 : 30, unit: '%', status: kpi.comfortStatus === 'OK' ? 'good' : kpi.comfortStatus === 'Warning' ? 'warning' : 'error' as const, level: 'subsystem' as const },
+        { title: 'Weighted RMS Acceleration', value: Math.round((kpi.iso2631_weightedRMS_ms2 || 0) * 100) / 100, unit: 'm/s²', status: ((kpi.iso2631_weightedRMS_ms2 || 0) < 0.8 ? 'good' : 'warning') as 'good' | 'warning', level: 'subsystem' as const },
+        { title: 'Exposure Duration', value: Math.round((kpi.exposureHours || 0) * 10) / 10, unit: 'hrs', status: ((kpi.exposureHours || 0) < 4 ? 'good' : 'warning') as 'good' | 'warning', level: 'subsystem' as const },
+        { title: 'Comfort Status', value: kpi.comfortStatus === 'OK' ? 100 : kpi.comfortStatus === 'Warning' ? 60 : 30, unit: '%', status: (kpi.comfortStatus === 'OK' ? 'good' : kpi.comfortStatus === 'Warning' ? 'warning' : 'critical') as 'good' | 'warning' | 'critical', level: 'subsystem' as const },
       ]
     }
     return []

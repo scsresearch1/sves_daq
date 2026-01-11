@@ -22,13 +22,13 @@ export default function Powertrain() {
       try {
         setError(null)
         const [domainData, streamsData] = await Promise.all([
-          apiClient.get('/domain/powertrain'),
-          apiClient.get('/domain/powertrain/streams?limit=10')
+          apiClient.get<any>('/domain/powertrain'),
+          apiClient.get<any[]>('/domain/powertrain/streams?limit=10')
         ])
 
         console.log('Powertrain domain data:', domainData)
-        setKpis(domainData.kpis || [])
-        setStreams(streamsData || [])
+        setKpis((domainData as any)?.kpis || [])
+        setStreams(Array.isArray(streamsData) ? streamsData : [])
       } catch (error: any) {
         console.error('Failed to fetch powertrain data:', error)
         setError(error.message || 'Failed to fetch powertrain data')
@@ -46,10 +46,10 @@ export default function Powertrain() {
   const displayKPIs = kpis.map((kpi: any) => {
     if (kpi.domain === 'electrical') {
       return [
-        { title: 'Average Efficiency', value: Math.round((kpi.avgEfficiencyPct || 0) * 10) / 10, unit: '%', status: (kpi.avgEfficiencyPct || 0) >= 85 ? 'good' : 'warning' as const, level: 'subsystem' as const },
+        { title: 'Average Efficiency', value: Math.round((kpi.avgEfficiencyPct || 0) * 10) / 10, unit: '%', status: ((kpi.avgEfficiencyPct || 0) >= 85 ? 'good' : 'warning') as 'good' | 'warning', level: 'subsystem' as const },
         { title: 'Peak Power Draw', value: Math.round((kpi.peakPowerW || 0) / 10) / 100, unit: 'kW', status: 'good' as const, level: 'subsystem' as const },
-        { title: 'Energy per km', value: Math.round((kpi.energyPerKm_Wh || 0) * 10) / 10, unit: 'Wh/km', status: (kpi.energyPerKm_Wh || 0) < 20 ? 'good' : 'warning' as const, level: 'subsystem' as const },
-        { title: 'Harmonic Distortion (THD)', value: Math.round((kpi.thdPct || 0) * 10) / 10, unit: '%', status: (kpi.thdPct || 0) < 5 ? 'good' : 'warning' as const, level: 'subsystem' as const },
+        { title: 'Energy per km', value: Math.round((kpi.energyPerKm_Wh || 0) * 10) / 10, unit: 'Wh/km', status: ((kpi.energyPerKm_Wh || 0) < 20 ? 'good' : 'warning') as 'good' | 'warning', level: 'subsystem' as const },
+        { title: 'Harmonic Distortion (THD)', value: Math.round((kpi.thdPct || 0) * 10) / 10, unit: '%', status: ((kpi.thdPct || 0) < 5 ? 'good' : 'warning') as 'good' | 'warning', level: 'subsystem' as const },
       ]
     }
     return []

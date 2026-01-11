@@ -1,15 +1,13 @@
-import { Box, Typography, Button, Grid, Card, CardContent, Container, useTheme, Fade, Slide, Zoom, useScrollTrigger } from '@mui/material'
+import { Box, Typography, Button, Grid, Card, CardContent, Container, Fade, Slide, Zoom } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState, useRef } from 'react'
 import {
   Dashboard,
   Analytics,
-  Science,
   Psychology,
   Extension,
   Security,
   Speed,
-  TrendingUp,
   Assessment,
   Engineering,
   LocalFireDepartment,
@@ -22,11 +20,8 @@ import {
   AutoAwesome,
   ShowChart,
   PrecisionManufacturing,
-  BarChart,
-  PieChart,
-  Timeline,
 } from '@mui/icons-material'
-import { LineChart, Line, AreaChart, Area, BarChart as ReBarChart, Bar, PieChart as RePieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
+import { AreaChart, Area, BarChart as ReBarChart, Bar, PieChart as RePieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 import landingBg1 from '@/assets/images/1.jpg'
 import landingBg2 from '@/assets/images/2.jpg'
 import landingBg3 from '@/assets/images/3.jpg'
@@ -34,7 +29,6 @@ import landingBg4 from '@/assets/images/4.jpg'
 
 export default function Landing() {
   const navigate = useNavigate()
-  const theme = useTheme()
   const [isVisible, setIsVisible] = useState(false)
   const [scrollY, setScrollY] = useState(0)
   const heroRef = useRef<HTMLDivElement>(null)

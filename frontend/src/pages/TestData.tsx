@@ -31,7 +31,7 @@ interface TestRecord {
 
 export default function TestData() {
   const [tests, setTests] = useState<TestRecord[]>([])
-  const [loading, setLoading] = useState(true)
+  const [_loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({
@@ -43,8 +43,8 @@ export default function TestData() {
   useEffect(() => {
     const fetchTests = async () => {
       try {
-        const data = await apiClient.get('/test-data')
-        setTests(data)
+        const data = await apiClient.get<any[]>('/test-data')
+        setTests(Array.isArray(data) ? data : [])
       } catch (error) {
         console.error('Failed to fetch test data:', error)
         // Mock data for development
@@ -160,7 +160,7 @@ export default function TestData() {
       const status = score >= threshold ? 'compliant' : 'non-compliant'
 
       try {
-        const response = await apiClient.post('/compliance', {
+        const response = await apiClient.post<any>('/compliance', {
           standard,
           testName: testData.testName,
           status,
@@ -209,7 +209,7 @@ export default function TestData() {
         let testRecord: TestRecord
         try {
           // Try to upload to backend
-          const response = await apiClient.post('/test-data', {
+          const response = await apiClient.post<any>('/test-data', {
             testName: testData.testName,
             domain: testData.domain,
             status: testData.status,
@@ -217,7 +217,7 @@ export default function TestData() {
           })
 
           testRecord = {
-            id: response.id || `new-${Date.now()}-${i}`,
+            id: (response as any)?.id || `new-${Date.now()}-${i}`,
             ...testData,
           }
         } catch (error) {

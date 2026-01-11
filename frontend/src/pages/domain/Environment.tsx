@@ -23,14 +23,14 @@ export default function Environment() {
       try {
         setError(null)
         const [domainData, streamsData] = await Promise.all([
-          apiClient.get('/domain/environment'),
-          apiClient.get('/domain/environment/streams?limit=10')
+          apiClient.get<any>('/domain/environment'),
+          apiClient.get<any[]>('/domain/environment/streams?limit=10')
         ])
 
         console.log('Environment domain data:', domainData)
-        setKpis(domainData.kpis || [])
-        setEvents(domainData.events || [])
-        setStreams(streamsData || [])
+        setKpis((domainData as any)?.kpis || [])
+        setEvents((domainData as any)?.events || [])
+        setStreams(Array.isArray(streamsData) ? streamsData : [])
       } catch (error: any) {
         console.error('Failed to fetch environment data:', error)
         setError(error.message || 'Failed to fetch environment data')
@@ -50,15 +50,15 @@ export default function Environment() {
     if (kpi.domain === 'environment') {
       return [
         { title: 'Winter Min Temp', value: Math.round((kpi.winterMinC || 0) * 10) / 10, unit: '°C', status: 'good' as const, level: 'subsystem' as const },
-        { title: 'Desert Max Temp', value: Math.round((kpi.desertMaxC || 0) * 10) / 10, unit: '°C', status: (kpi.desertMaxC || 0) < 50 ? 'good' : 'warning' as const, level: 'subsystem' as const },
-        { title: 'Performance Drift', value: Math.round((kpi.performanceDriftPct || 0) * 10) / 10, unit: '%', status: (kpi.performanceDriftPct || 0) < 10 ? 'good' : 'warning' as const, level: 'subsystem' as const },
-        { title: 'Derating Active', value: kpi.deratingFlag ? 100 : 0, unit: '%', status: kpi.deratingFlag ? 'warning' : 'good' as const, level: 'subsystem' as const },
+        { title: 'Desert Max Temp', value: Math.round((kpi.desertMaxC || 0) * 10) / 10, unit: '°C', status: ((kpi.desertMaxC || 0) < 50 ? 'good' : 'warning') as 'good' | 'warning', level: 'subsystem' as const },
+        { title: 'Performance Drift', value: Math.round((kpi.performanceDriftPct || 0) * 10) / 10, unit: '%', status: ((kpi.performanceDriftPct || 0) < 10 ? 'good' : 'warning') as 'good' | 'warning', level: 'subsystem' as const },
+        { title: 'Derating Active', value: kpi.deratingFlag ? 100 : 0, unit: '%', status: (kpi.deratingFlag ? 'warning' : 'good') as 'good' | 'warning', level: 'subsystem' as const },
       ]
     } else if (kpi.domain === 'thermal') {
       return [
-        { title: 'Peak Temperature', value: Math.round((kpi.strutTempPeakC || 0) * 10) / 10, unit: '°C', status: (kpi.strutTempPeakC || 0) < 150 ? 'good' : 'warning' as const, level: 'subsystem' as const },
-        { title: 'Thermal Gradient', value: Math.round((kpi.tempGradientCperMin || 0) * 10) / 10, unit: '°C/min', status: (kpi.tempGradientCperMin || 0) < 15 ? 'good' : 'warning' as const, level: 'subsystem' as const },
-        { title: 'Heat Soak Detected', value: kpi.heatSoakDetected ? 100 : 0, unit: '%', status: kpi.heatSoakDetected ? 'warning' : 'good' as const, level: 'subsystem' as const },
+        { title: 'Peak Temperature', value: Math.round((kpi.strutTempPeakC || 0) * 10) / 10, unit: '°C', status: ((kpi.strutTempPeakC || 0) < 150 ? 'good' : 'warning') as 'good' | 'warning', level: 'subsystem' as const },
+        { title: 'Thermal Gradient', value: Math.round((kpi.tempGradientCperMin || 0) * 10) / 10, unit: '°C/min', status: ((kpi.tempGradientCperMin || 0) < 15 ? 'good' : 'warning') as 'good' | 'warning', level: 'subsystem' as const },
+        { title: 'Heat Soak Detected', value: kpi.heatSoakDetected ? 100 : 0, unit: '%', status: (kpi.heatSoakDetected ? 'warning' : 'good') as 'good' | 'warning', level: 'subsystem' as const },
       ]
     }
     return []

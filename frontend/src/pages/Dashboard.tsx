@@ -6,7 +6,6 @@ import {
   Box,
   Card,
   CardContent,
-  Button,
   List,
   ListItem,
   ListItemButton,
@@ -15,7 +14,6 @@ import {
 } from '@mui/material'
 import {
   TrendingUp,
-  Warning,
   CheckCircle,
   Speed,
   Science,
@@ -315,7 +313,7 @@ export default function Dashboard() {
               <ListItem disablePadding>
                 <ListItemButton onClick={async () => {
                   try {
-                    const kpis = await apiClient.get('/kpis?level=executive')
+                    const kpis = await apiClient.get<any>('/kpis?level=executive')
                     const dataStr = JSON.stringify(kpis, null, 2)
                     const dataBlob = new Blob([dataStr], { type: 'application/json' })
                     const url = URL.createObjectURL(dataBlob)

@@ -4,7 +4,7 @@ import GlobalFilters from '../../components/GlobalFilters'
 import KPICard from '../../components/KPICard'
 import dashboardBg from '@/assets/images/3.jpg'
 import { apiClient } from '../../services/api'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ScatterChart, Scatter, ZAxis } from 'recharts'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
 function TabPanel({ children, value, index }: { children: React.ReactNode; value: number; index: number }) {
   return <div hidden={value !== index}>{value === index && <Box sx={{ pt: 3 }}>{children}</Box>}</div>
@@ -23,14 +23,14 @@ export default function NVH() {
       try {
         setError(null)
         const [domainData, streamsData] = await Promise.all([
-          apiClient.get('/domain/nvh'),
-          apiClient.get('/domain/nvh/streams?limit=10')
+          apiClient.get<any>('/domain/nvh'),
+          apiClient.get<any[]>('/domain/nvh/streams?limit=10')
         ])
 
         console.log('NVH domain data:', domainData)
-        setKpis(domainData.kpis || [])
-        setEvents(domainData.events || [])
-        setStreams(streamsData || [])
+        setKpis((domainData as any)?.kpis || [])
+        setEvents((domainData as any)?.events || [])
+        setStreams(Array.isArray(streamsData) ? streamsData : [])
       } catch (error: any) {
         console.error('Failed to fetch NVH data:', error)
         setError(error.message || 'Failed to fetch NVH data')
@@ -49,9 +49,9 @@ export default function NVH() {
   const displayKPIs = kpis.map((kpi: any) => {
     if (kpi.domain === 'nvh') {
       return [
-        { title: 'SPL Max', value: Math.round((kpi.splMax_dBA || 0) * 10) / 10, unit: 'dBA', status: (kpi.splMax_dBA || 0) < 90 ? 'good' : 'warning' as const, level: 'subsystem' as const },
-        { title: 'LAeq', value: Math.round((kpi.laeq_dBA || 0) * 10) / 10, unit: 'dBA', status: (kpi.laeq_dBA || 0) < 75 ? 'good' : 'warning' as const, level: 'subsystem' as const },
-        { title: 'Squeal Occurrences', value: kpi.squealOccurrences || 0, unit: 'events', status: (kpi.squealOccurrences || 0) < 3 ? 'good' : 'warning' as const, level: 'subsystem' as const },
+        { title: 'SPL Max', value: Math.round((kpi.splMax_dBA || 0) * 10) / 10, unit: 'dBA', status: ((kpi.splMax_dBA || 0) < 90 ? 'good' : 'warning') as 'good' | 'warning', level: 'subsystem' as const },
+        { title: 'LAeq', value: Math.round((kpi.laeq_dBA || 0) * 10) / 10, unit: 'dBA', status: ((kpi.laeq_dBA || 0) < 75 ? 'good' : 'warning') as 'good' | 'warning', level: 'subsystem' as const },
+        { title: 'Squeal Occurrences', value: kpi.squealOccurrences || 0, unit: 'events', status: ((kpi.squealOccurrences || 0) < 3 ? 'good' : 'warning') as 'good' | 'warning', level: 'subsystem' as const },
         { title: 'Dominant Order', value: Math.round((kpi.dominantOrder || 0) * 10) / 10, unit: '', status: 'good' as const, level: 'subsystem' as const },
       ]
     }

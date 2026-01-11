@@ -23,16 +23,16 @@ export default function Chassis() {
       try {
         setError(null)
         const [domainData, streamsData] = await Promise.all([
-          apiClient.get('/domain/chassis'),
-          apiClient.get('/domain/chassis/streams?limit=10')
+          apiClient.get<any>('/domain/chassis'),
+          apiClient.get<any[]>('/domain/chassis/streams?limit=10')
         ])
 
         console.log('Chassis domain data:', domainData)
         console.log('Chassis streams data:', streamsData)
 
-        setKpis(domainData.kpis || [])
-        setEvents(domainData.events || [])
-        setStreams(streamsData || [])
+        setKpis((domainData as any)?.kpis || [])
+        setEvents((domainData as any)?.events || [])
+        setStreams(Array.isArray(streamsData) ? streamsData : [])
       } catch (error: any) {
         console.error('Failed to fetch chassis data:', error)
         setError(error.message || 'Failed to fetch chassis data')
@@ -52,15 +52,15 @@ export default function Chassis() {
   const displayKPIs = kpis.map((kpi: any) => {
     if (kpi.domain === 'suspension') {
       return [
-        { title: 'Peak Strain Utilization', value: Math.round((kpi.peakStrainUtilizationPct || 0) * 10) / 10, unit: '%', status: (kpi.peakStrainUtilizationPct || 0) < 80 ? 'good' : 'warning' as const, level: 'subsystem' as const },
-        { title: 'Load Asymmetry L-R', value: Math.round((kpi.leftRightAsymmetryPct || 0) * 10) / 10, unit: '%', status: (kpi.leftRightAsymmetryPct || 0) < 15 ? 'good' : 'warning' as const, level: 'subsystem' as const },
-        { title: 'Bottom-out Frequency', value: kpi.bottomOutCount || 0, unit: 'events', status: (kpi.bottomOutCount || 0) < 5 ? 'good' : 'warning' as const, level: 'subsystem' as const },
+        { title: 'Peak Strain Utilization', value: Math.round((kpi.peakStrainUtilizationPct || 0) * 10) / 10, unit: '%', status: ((kpi.peakStrainUtilizationPct || 0) < 80 ? 'good' : 'warning') as 'good' | 'warning', level: 'subsystem' as const },
+        { title: 'Load Asymmetry L-R', value: Math.round((kpi.leftRightAsymmetryPct || 0) * 10) / 10, unit: '%', status: ((kpi.leftRightAsymmetryPct || 0) < 15 ? 'good' : 'warning') as 'good' | 'warning', level: 'subsystem' as const },
+        { title: 'Bottom-out Frequency', value: kpi.bottomOutCount || 0, unit: 'events', status: ((kpi.bottomOutCount || 0) < 5 ? 'good' : 'warning') as 'good' | 'warning', level: 'subsystem' as const },
         { title: 'Load Sharing Ratio', value: Math.round((kpi.loadSharingArmVsStrut || 0) * 100) / 100, status: 'good' as const, level: 'subsystem' as const },
       ]
     } else if (kpi.domain === 'fatigue') {
       return [
-        { title: 'Fatigue Damage / 100km', value: Math.round((kpi.minerDamageTotal || 0) * 1000) / 1000, status: (kpi.minerDamageTotal || 0) < 1 ? 'good' : 'warning' as const, level: 'subsystem' as const },
-        { title: 'Remaining Life', value: Math.round((kpi.remainingLifeHours || 0) * 10) / 10, unit: 'hours', status: (kpi.remainingLifeHours || 0) > 50 ? 'good' : (kpi.remainingLifeHours || 0) > 20 ? 'warning' : 'error' as const, level: 'subsystem' as const },
+        { title: 'Fatigue Damage / 100km', value: Math.round((kpi.minerDamageTotal || 0) * 1000) / 1000, status: ((kpi.minerDamageTotal || 0) < 1 ? 'good' : 'warning') as 'good' | 'warning', level: 'subsystem' as const },
+        { title: 'Remaining Life', value: Math.round((kpi.remainingLifeHours || 0) * 10) / 10, unit: 'hours', status: ((kpi.remainingLifeHours || 0) > 50 ? 'good' : (kpi.remainingLifeHours || 0) > 20 ? 'warning' : 'critical') as 'good' | 'warning' | 'critical', level: 'subsystem' as const },
       ]
     }
     return []
@@ -226,7 +226,7 @@ export default function Chassis() {
                 <Grid item xs={12} md={4}>
                   <Box sx={{ p: 2 }}>
                     <Typography variant="subtitle2" gutterBottom>Rainflow Bins</Typography>
-                    {rainflowData.map((bin, idx) => (
+                    {rainflowData.map((bin: { range: string; cycles: number; damage: number }, idx: number) => (
                       <Box key={idx} sx={{ mb: 1, p: 1, bgcolor: 'background.paper', borderRadius: 1 }}>
                         <Typography variant="body2"><strong>{bin.range}</strong></Typography>
                         <Typography variant="body2">Cycles: {bin.cycles?.toLocaleString()}</Typography>

@@ -33,9 +33,9 @@ export default function Compliance() {
   useEffect(() => {
     const fetchCompliance = async () => {
       try {
-        const data = await apiClient.get('/compliance')
+        const data = await apiClient.get<ComplianceRecord[]>('/compliance')
         // Sort by lastUpdated descending to show newest first
-        const sortedData = (data as ComplianceRecord[]).sort((a, b) => 
+        const sortedData = (Array.isArray(data) ? data : []).sort((a, b) => 
           new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime()
         )
         setRecords(sortedData)

@@ -123,8 +123,8 @@ export default function ML() {
   useEffect(() => {
     const fetchPredictions = async () => {
       try {
-        const data = await apiClient.get('/ml')
-        const formattedPredictions = (data as any[]).slice(0, 6).map((pred: any) => {
+        const data = await apiClient.get<any[]>('/ml')
+        const formattedPredictions = (Array.isArray(data) ? data : []).slice(0, 6).map((pred: any) => {
           const cards = []
           
           if (pred.remainingLifeHours !== undefined) {
@@ -235,11 +235,11 @@ export default function ML() {
         return
       }
 
-      const result = await apiClient.post('/ml/predict', { testData, modelType: predictionType })
+      const result = await apiClient.post<any>('/ml/predict', { testData, modelType: predictionType })
       
       // Format the prediction result based on prediction type
-      const predictionValue = result.prediction?.value || 0
-      const confidence = result.prediction?.confidence || result.confidence || 0.85
+      const predictionValue = result?.prediction?.value || result?.value || 0
+      const confidence = result?.prediction?.confidence || result?.confidence || 0.85
       
       // Create a formatted prediction card
       const predictionCard = {
@@ -556,12 +556,12 @@ export default function ML() {
                   setTimeout(async () => {
                     setRunningPrediction(true)
                     try {
-                      const result = await apiClient.post('/ml/predict', { 
+                      const result = await apiClient.post<any>('/ml/predict', { 
                         testData: situation.sampleData, 
                         modelType: situation.predictionType 
                       })
-                      const predictionValue = result.prediction?.value || 0
-                      const confidence = result.prediction?.confidence || result.confidence || 0.85
+                      const predictionValue = result?.prediction?.value || result?.value || 0
+                      const confidence = result?.prediction?.confidence || result?.confidence || 0.85
                       const predictionCard = {
                         title: predictionTypes.find(t => t.value === situation.predictionType)?.label || 'Prediction',
                         value: Math.round(predictionValue * 10) / 10,

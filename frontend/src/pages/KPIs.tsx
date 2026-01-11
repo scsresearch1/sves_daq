@@ -37,7 +37,7 @@ export default function KPIs() {
     const fetchKPIs = async () => {
       try {
         // Fetch executive KPIs
-        const execData = await apiClient.get('/kpis/executive')
+        const execData = await apiClient.get<any>('/kpis/executive')
         const execKPIs = [
           {
             title: 'Safety Compliance Index',
@@ -106,8 +106,8 @@ export default function KPIs() {
         setExecutiveKPIs(execKPIs)
 
         // Fetch subsystem KPIs
-        const subsystemData = await apiClient.get('/kpis?level=subsystem')
-        const subsystem = (subsystemData as KPI[]).map((kpi) => {
+        const subsystemData = await apiClient.get<KPI[]>('/kpis?level=subsystem')
+        const subsystem = (Array.isArray(subsystemData) ? subsystemData : []).map((kpi) => {
           let title = ''
           let value = 0
           let unit = ''
@@ -159,8 +159,8 @@ export default function KPIs() {
         setSubsystemKPIs(subsystem)
 
         // Diagnostic KPIs
-        const diagnosticData = await apiClient.get('/kpis?level=diagnostic')
-        const diagnostic = (diagnosticData as any[]).map((kpi: any) => {
+        const diagnosticData = await apiClient.get<any[]>('/kpis?level=diagnostic')
+        const diagnostic = (Array.isArray(diagnosticData) ? diagnosticData : []).map((kpi: any) => {
           let title = ''
           let value = 0
           let unit = ''

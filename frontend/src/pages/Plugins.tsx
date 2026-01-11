@@ -66,7 +66,7 @@ export default function Plugins() {
     setRunningPlugins((prev) => new Set(prev).add(plugin.name))
 
     try {
-      const result = await apiClient.post(`/plugins/${plugin.name}/run`, {
+      const result = await apiClient.post<any>(`/plugins/${plugin.name}/run`, {
         testId: null, // Could be passed from GlobalFilters
         config: {},
       })
@@ -108,7 +108,7 @@ export default function Plugins() {
     if (!configDialog.plugin) return
 
     try {
-      await apiClient.post(`/plugins/${configDialog.plugin.name}/configure`, {
+      await apiClient.post<any>(`/plugins/${configDialog.plugin.name}/configure`, {
         config: {},
       })
 
