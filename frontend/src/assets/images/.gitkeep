@@ -1,0 +1,2 @@
+# Images that are imported in components go here
+# Import them as: import bgImage from '@/assets/images/your-image.jpg'

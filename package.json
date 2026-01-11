@@ -1,0 +1,31 @@
+{
+  "name": "sves-daq",
+  "version": "1.0.0",
+  "description": "Scientific Vehicle Validation and Intelligence Dashboard - A corporate-grade scientific vehicle validation and intelligence dashboard",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "build": "npm run build:frontend && npm run build:backend",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "cd backend && npm run build",
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "vehicle-validation",
+    "scientific-dashboard",
+    "multi-physics",
+    "predictive-analytics",
+    "automotive"
+  ],
+  "author": "",
+  "license": "MIT"
+}
