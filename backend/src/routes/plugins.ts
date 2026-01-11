@@ -1,13 +1,15 @@
 import { Router } from 'express'
 import { asyncHandler } from '../middleware/errorHandler'
-import { db } from '../config/firebase'
+import { db, admin } from '../config/firebase'
+
+type QueryDocumentSnapshot = admin.firestore.QueryDocumentSnapshot
 
 const router = Router()
 
 // Get all plugins
 router.get(
   '/',
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (_req, res) => {
     try {
       // Check if Firebase is initialized
       try {
@@ -18,7 +20,7 @@ router.get(
       }
 
       const snapshot = await db.collection('plugins').get()
-      const plugins = snapshot.docs.map((doc) => ({
+      const plugins = snapshot.docs.map((doc: QueryDocumentSnapshot) => ({
         id: doc.id,
         ...doc.data(),
       }))
@@ -37,7 +39,7 @@ router.post(
   asyncHandler(async (req, res) => {
     try {
       const { pluginName } = req.params
-      const { testId, config } = req.body
+      const { config } = req.body
 
       // Plugin execution logic based on plugin name
       let result: any = {

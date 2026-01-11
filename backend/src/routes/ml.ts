@@ -1,7 +1,9 @@
 import { Router } from 'express'
 import { asyncHandler } from '../middleware/errorHandler'
 import { predictPerformance } from '../services/mlService'
-import { db } from '../config/firebase'
+import { db, admin } from '../config/firebase'
+
+type QueryDocumentSnapshot = admin.firestore.QueryDocumentSnapshot
 
 const router = Router()
 
@@ -19,7 +21,7 @@ router.get(
       }
 
       const snapshot = await query.limit(Number(limit)).get()
-      const predictions = snapshot.docs.map((doc) => ({
+      const predictions = snapshot.docs.map((doc: QueryDocumentSnapshot) => ({
         id: doc.id,
         ...doc.data(),
       }))
@@ -39,9 +41,10 @@ router.post(
       const { testData, modelType = 'default' } = req.body
 
       if (!testData) {
-        return res.status(400).json({
+        res.status(400).json({
           error: 'Missing required field: testData',
         })
+        return
       }
 
       const prediction = await predictPerformance(testData, modelType)
@@ -65,9 +68,10 @@ router.post(
       const { testResults, domain } = req.body
 
       if (!testResults) {
-        return res.status(400).json({
+        res.status(400).json({
           error: 'Missing required field: testResults',
         })
+        return
       }
 
       // Risk analysis logic
@@ -104,7 +108,7 @@ router.post(
   })
 )
 
-function analyzeRiskFactors(testResults: any, domain?: string) {
+function analyzeRiskFactors(testResults: any, _domain?: string) {
   // Placeholder risk analysis logic
   // In production, this would use trained ML models
   const factors: any[] = []
@@ -140,7 +144,7 @@ function analyzeRiskFactors(testResults: any, domain?: string) {
   }
 }
 
-function generateRecommendations(testData: any, performanceGaps: any[]) {
+function generateRecommendations(_testData: any, performanceGaps: any[]) {
   // Placeholder recommendation logic
   // In production, this would use ML models to suggest optimizations
   return performanceGaps.map((gap) => ({

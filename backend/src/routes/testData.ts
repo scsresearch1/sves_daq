@@ -2,6 +2,8 @@ import { Router } from 'express'
 import { asyncHandler } from '../middleware/errorHandler'
 import { db, admin } from '../config/firebase'
 
+type QueryDocumentSnapshot = admin.firestore.QueryDocumentSnapshot
+
 const router = Router()
 
 router.get(
@@ -17,7 +19,7 @@ router.get(
       }
 
       const snapshot = await query.limit(Number(limit)).get()
-      const tests = snapshot.docs.map((doc) => ({
+      const tests = snapshot.docs.map((doc: QueryDocumentSnapshot) => ({
         id: doc.id,
         ...doc.data(),
       }))
@@ -37,9 +39,10 @@ router.post(
 
       // Validate required fields
       if (!testData.testName || !testData.domain) {
-        return res.status(400).json({
+        res.status(400).json({
           error: 'Missing required fields: testName, domain',
         })
+        return
       }
 
       const docRef = await db.collection('testData').add({

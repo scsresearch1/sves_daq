@@ -1,6 +1,8 @@
 import { Router } from 'express'
 import { asyncHandler } from '../middleware/errorHandler'
-import { db } from '../config/firebase'
+import { db, admin } from '../config/firebase'
+
+type QueryDocumentSnapshot = admin.firestore.QueryDocumentSnapshot
 
 const router = Router()
 
@@ -19,7 +21,7 @@ router.get(
       }
 
       const snapshot = await query.get()
-      const tests = snapshot.docs.map((doc) => doc.data())
+      const tests = snapshot.docs.map((doc: QueryDocumentSnapshot) => doc.data())
 
       // Calculate domain distribution
       const domainCounts: Record<string, number> = {}

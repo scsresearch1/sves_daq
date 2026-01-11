@@ -6,14 +6,15 @@ const router = Router()
 
 router.get(
   '/dashboard',
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (_req, res) => {
     try {
       // Fetch metrics from Firestore
       const metricsRef = db.collection('metrics').doc('dashboard')
       const metricsDoc = await metricsRef.get()
 
       if (metricsDoc.exists) {
-        return res.json(metricsDoc.data())
+        res.json(metricsDoc.data())
+        return
       }
 
       // Return default metrics if not found

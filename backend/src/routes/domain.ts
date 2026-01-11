@@ -1,6 +1,8 @@
 import { Router } from 'express'
 import { asyncHandler } from '../middleware/errorHandler'
-import { db } from '../config/firebase'
+import { db, admin } from '../config/firebase'
+
+type QueryDocumentSnapshot = admin.firestore.QueryDocumentSnapshot
 
 const router = Router()
 
@@ -45,7 +47,7 @@ router.get(
       if (programId) kpiQuery = kpiQuery.where('programId', '==', programId)
 
       const kpiSnapshot = await kpiQuery.get()
-      const kpis = kpiSnapshot.docs.map((doc) => ({
+      const kpis = kpiSnapshot.docs.map((doc: QueryDocumentSnapshot) => ({
         id: doc.id,
         ...doc.data(),
       }))
@@ -64,7 +66,7 @@ router.get(
       }
 
       const testSnapshot = await testQuery.get()
-      const tests = testSnapshot.docs.map((doc) => ({
+      const tests = testSnapshot.docs.map((doc: QueryDocumentSnapshot) => ({
         id: doc.id,
         ...doc.data(),
       }))
@@ -85,7 +87,7 @@ router.get(
         eventQuery = eventQuery.where('testId', '==', testId)
       }
       const eventSnapshot = await eventQuery.limit(50).get() // Get more to filter
-      let events = eventSnapshot.docs.map((doc) => ({
+      let events = eventSnapshot.docs.map((doc: QueryDocumentSnapshot) => ({
         id: doc.id,
         ...doc.data(),
       }))
@@ -125,7 +127,7 @@ router.get(
   asyncHandler(async (req, res) => {
     try {
       const { domain } = req.params
-      const { testId, sensorId, limit = 10 } = req.query
+      const { testId, limit = 10 } = req.query
 
       // Check if Firebase is initialized
       try {
@@ -155,7 +157,7 @@ router.get(
       }
 
       const snapshot = await query.limit(Number(limit) * 2).get() // Get more to filter
-      let streams = snapshot.docs.map((doc) => ({
+      let streams = snapshot.docs.map((doc: QueryDocumentSnapshot) => ({
         id: doc.id,
         ...doc.data(),
       }))
@@ -163,8 +165,8 @@ router.get(
       // Filter by sensor type if domain-specific prefixes exist
       if (sensorPrefixes.length > 0) {
         streams = streams.filter((stream: any) => {
-          const sensorId = (stream.sensorId || '').toLowerCase()
-          return sensorPrefixes.some(prefix => sensorId.includes(prefix))
+          const streamSensorId = (stream.sensorId || '').toLowerCase()
+          return sensorPrefixes.some(prefix => streamSensorId.includes(prefix))
         })
       }
 
@@ -176,6 +178,7 @@ router.get(
       console.error(`[Domain API] Error fetching streams for ${req.params.domain}:`, error)
       // Return empty array instead of throwing to prevent 500 errors
       res.json([])
+      return
     }
   })
 )

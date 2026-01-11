@@ -71,7 +71,7 @@ let _db: any = null
 let _storage: any = null
 
 export const db = new Proxy({} as any, {
-  get(target, prop) {
+  get(_target, prop) {
     if (!firebaseInitialized || !admin.apps.length) {
       throw new Error('Firebase is not initialized. Please configure Firebase credentials in .env')
     }
@@ -83,7 +83,7 @@ export const db = new Proxy({} as any, {
 })
 
 export const storage = new Proxy({} as any, {
-  get(target, prop) {
+  get(_target, prop) {
     if (!firebaseInitialized || !admin.apps.length) {
       throw new Error('Firebase is not initialized. Please configure Firebase credentials in .env')
     }

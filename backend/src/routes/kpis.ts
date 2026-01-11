@@ -1,6 +1,8 @@
 import { Router } from 'express'
 import { asyncHandler } from '../middleware/errorHandler'
-import { db } from '../config/firebase'
+import { db, admin } from '../config/firebase'
+
+type QueryDocumentSnapshot = admin.firestore.QueryDocumentSnapshot
 
 const router = Router()
 
@@ -30,7 +32,7 @@ router.get(
       }
 
       const snapshot = await query.get()
-      let kpis = snapshot.docs.map((doc) => ({
+      let kpis = snapshot.docs.map((doc: QueryDocumentSnapshot) => ({
         id: doc.id,
         ...doc.data(),
       }))
@@ -70,7 +72,7 @@ router.get(
       }
 
       const snapshot = await query.get()
-      const executiveKpis = snapshot.docs.map((doc) => ({
+      const executiveKpis = snapshot.docs.map((doc: QueryDocumentSnapshot) => ({
         id: doc.id,
         ...doc.data(),
       }))
