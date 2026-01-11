@@ -21,7 +21,14 @@ const PORT = process.env.PORT || 3000
 initializeFirebase()
 
 // Middleware
-app.use(cors())
+// CORS configuration - allow all origins in production, localhost in development
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' 
+    ? true // Allow all origins in production (or specify Netlify domain)
+    : ['http://localhost:5173', 'http://localhost:3000'],
+  credentials: true,
+}
+app.use(cors(corsOptions))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 

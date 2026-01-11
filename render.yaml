@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: sves-daq-backend
+    env: node
+    buildCommand: cd backend && npm install && npm run build
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      # Firebase credentials - set these in Render dashboard
+      # Option 1: Use JSON string (recommended for Render)
+      - key: FIREBASE_SERVICE_ACCOUNT
+        sync: false  # Set manually in Render dashboard
+      # Option 2: Use file path (if you upload the file)
+      # - key: FIREBASE_SERVICE_ACCOUNT_KEY_PATH
+      #   sync: false
