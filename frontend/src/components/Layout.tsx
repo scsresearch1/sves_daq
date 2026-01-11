@@ -170,7 +170,20 @@ export default function Layout({ children }: LayoutProps) {
       }}
     >
       <Toolbar>
-        <Typography variant="h6" noWrap component="div" sx={{ fontWeight: 700 }}>
+        <Typography 
+          variant="h6" 
+          noWrap 
+          component="div" 
+          sx={{ 
+            fontWeight: 700,
+            cursor: 'pointer',
+            transition: 'opacity 0.2s',
+            '&:hover': {
+              opacity: 0.8,
+            },
+          }}
+          onClick={() => navigate('/landing')}
+        >
           SVES-DAQ
         </Typography>
       </Toolbar>
