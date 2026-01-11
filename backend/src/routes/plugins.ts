@@ -25,10 +25,10 @@ router.get(
         ...doc.data(),
       }))
 
-      res.json(plugins)
+      return res.json(plugins)
     } catch (error: any) {
       // Return empty array on error
-      res.json([])
+      return res.json([])
     }
   })
 )
@@ -39,7 +39,7 @@ router.post(
   asyncHandler(async (req, res) => {
     try {
       const { pluginName } = req.params
-      const { config } = req.body
+      const { config: _config } = req.body
 
       // Plugin execution logic based on plugin name
       let result: any = {

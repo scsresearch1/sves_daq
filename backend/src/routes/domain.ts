@@ -101,7 +101,7 @@ router.get(
       }
       events = events.slice(0, 20) // Limit after filtering
 
-      res.json({
+      return res.json({
         domain: firebaseDomain,
         kpis,
         tests,
@@ -110,7 +110,7 @@ router.get(
     } catch (error: any) {
       console.error(`[Domain API] Error fetching domain data for ${req.params.domain}:`, error)
       // Return empty data instead of throwing to prevent 500 errors
-      res.json({
+      return res.json({
         domain: req.params.domain.toLowerCase(),
         kpis: [],
         tests: [],
@@ -173,12 +173,11 @@ router.get(
       // Limit after filtering
       streams = streams.slice(0, Number(limit))
 
-      res.json(streams)
+      return res.json(streams)
     } catch (error: any) {
       console.error(`[Domain API] Error fetching streams for ${req.params.domain}:`, error)
       // Return empty array instead of throwing to prevent 500 errors
-      res.json([])
-      return
+      return res.json([])
     }
   })
 )
