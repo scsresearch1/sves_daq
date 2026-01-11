@@ -30,6 +30,7 @@ import {
   DirectionsCar as RideIcon,
   Bolt as PowerIcon,
   AcUnit as EnvironmentIcon,
+  Help as HelpIcon,
   ExpandMore,
   ExpandLess,
 } from '@mui/icons-material'
@@ -128,6 +129,12 @@ const systemMenuItems = [
     icon: <SettingsIcon />,
     path: '/settings',
     tooltip: 'Configuration: sensor setup, user roles, calibration management, and traceability settings',
+  },
+  {
+    text: 'Help',
+    icon: <HelpIcon />,
+    path: '/help',
+    tooltip: 'Product manual, user guide, troubleshooting, and FAQ',
   },
 ]
 

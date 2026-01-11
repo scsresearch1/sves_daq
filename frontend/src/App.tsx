@@ -11,6 +11,7 @@ import Compliance from './pages/Compliance'
 import Plugins from './pages/Plugins'
 import ML from './pages/ML'
 import Settings from './pages/Settings'
+import Help from './pages/Help'
 import Chassis from './pages/domain/Chassis'
 import Brake from './pages/domain/Brake'
 import NVH from './pages/domain/NVH'
@@ -78,6 +79,7 @@ function App() {
           <Route path="/plugins" element={<Layout><Plugins /></Layout>} />
           <Route path="/ml" element={<Layout><ML /></Layout>} />
           <Route path="/settings" element={<Layout><Settings /></Layout>} />
+          <Route path="/help" element={<Layout><Help /></Layout>} />
           <Route path="/domain/chassis" element={<Layout><Chassis /></Layout>} />
           <Route path="/domain/brake" element={<Layout><Brake /></Layout>} />
           <Route path="/domain/nvh" element={<Layout><NVH /></Layout>} />
