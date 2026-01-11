@@ -1,7 +1,7 @@
 import { Router } from 'express'
-import { asyncHandler } from '../middleware/errorHandler'
-import { predictPerformance } from '../services/mlService'
-import { db, admin } from '../config/firebase'
+import { asyncHandler } from '../middleware/errorHandler.js'
+import { predictPerformance } from '../services/mlService.js'
+import { db, admin } from '../config/firebase.js'
 
 type QueryDocumentSnapshot = admin.firestore.QueryDocumentSnapshot
 

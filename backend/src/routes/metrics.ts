@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import { asyncHandler } from '../middleware/errorHandler'
-import { db } from '../config/firebase'
+import { asyncHandler } from '../middleware/errorHandler.js'
+import { db } from '../config/firebase.js'
 
 const router = Router()
 
