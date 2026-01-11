@@ -32,6 +32,27 @@ app.use(cors(corsOptions))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+// Root endpoint - API information
+app.get('/', (_req, res) => {
+  res.json({
+    name: 'SVES-DAQ Backend API',
+    version: '1.0.0',
+    status: 'running',
+    endpoints: {
+      health: '/health',
+      metrics: '/api/metrics',
+      testData: '/api/test-data',
+      analytics: '/api/analytics',
+      compliance: '/api/compliance',
+      ml: '/api/ml',
+      kpis: '/api/kpis',
+      domain: '/api/domain',
+      plugins: '/api/plugins',
+    },
+    timestamp: new Date().toISOString(),
+  })
+})
+
 // Health check
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
